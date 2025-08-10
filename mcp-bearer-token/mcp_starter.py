@@ -202,6 +202,48 @@ async def make_img_black_and_white(
         return [ImageContent(type="image", mimeType="image/png", data=bw_base64)]
     except Exception as e:
         raise McpError(ErrorData(code=INTERNAL_ERROR, message=str(e)))
+    
+import requests
+import random
+
+# Put your Imgflip credentials here
+IMGFLIP_USERNAME = "amrlap"
+IMGFLIP_PASSWORD = "@amr@lap" 
+
+@mcp.tool(description="Generate a meme with a given topic")
+async def meme_maker(topic: str) -> str:
+    """
+    Generates a meme on the given topic using the Imgflip API.
+    """
+
+    # List of popular meme templates (template_id from Imgflip)
+    templates = [
+        ("61579", "One Does Not Simply"),
+        ("112126428", "Distracted Boyfriend"),
+        ("181913649", "Drake Hotline Bling"),
+        ("87743020", "Two Buttons"),
+    ]
+    template_id, _ = random.choice(templates)
+
+    top_text = f"When you think about {topic}"
+    bottom_text = "But AI does it better!"
+
+    payload = {
+        "template_id": template_id,
+        "username": IMGFLIP_USERNAME,
+        "password": IMGFLIP_PASSWORD,
+        "text0": top_text,
+        "text1": bottom_text,
+    }
+
+    response = requests.post("https://api.imgflip.com/caption_image", data=payload)
+    data = response.json()
+
+    if data.get("success"):
+        return data["data"]["url"]
+    else:
+        return "Sorry, meme generation failed. Please try again."
+
 
 # --- Run MCP Server ---
 async def main():
