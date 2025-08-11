@@ -45,6 +45,23 @@ mcp = FastMCP("Spotify Playlist Maker MCP Server", auth=SimpleBearerAuthProvider
 async def validate() -> str:
     return MY_NUMBER
 
+
+from textwrap import dedent
+
+@mcp.tool
+async def about() -> dict[str, str]:
+    server_name = "Spotify Playlist Maker MCP"
+    server_description = dedent("""
+    This MCP server helps you create curated Spotify playlists using natural language prompts.
+    Describe your mood, a genre, or an activity, and get a list of Spotify tracks instantly, each with direct links.
+    The server uses secure authentication and supports integration with Puch AI for easy playlist building and sharing.
+    Mage by team Neural Chakra from Siksha 'O' Anusandhan University 
+    """)
+    return {
+        "name": server_name,
+        "description": server_description
+    }
+
 @mcp.tool(description="Generate Spotify track suggestions based on mood or genre prompt")
 async def spotify_playlist_maker(
     prompt: Annotated[str, Field(description="Description of desired playlist mood, genre, or theme")]
